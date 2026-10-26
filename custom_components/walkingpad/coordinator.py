@@ -15,6 +15,12 @@ from .const import DOMAIN, UPDATE_INTERVAL
 
 _LOGGER = logging.getLogger(__name__)
 
+# Belt States vom WalkingPad
+BELT_STATE_STANDBY = 0
+BELT_STATE_RUNNING = 1
+BELT_STATE_PAUSED = 2
+BELT_STATE_STOPPED = 3
+
 
 class WalkingPadCoordinator(DataUpdateCoordinator):
     """Koordiniert die Bluetooth-Verbindung zum WalkingPad."""
@@ -37,6 +43,14 @@ class WalkingPadCoordinator(DataUpdateCoordinator):
         self.controller: Controller | None = None
         self._connected = False
         self._lock = asyncio.Lock()
+        self._last_status: WalkingPadCurStatus | None = None
+
+        # Für Gesamt-Statistik: letzte Werte vom Gerät
+        self._last_device_steps: int | None = None
+        self._last_device_distance: float | None = None
+        # Akkumulierte Werte (werden von Sensoren aktualisiert)
+        self.total_steps_offset: int = 0
+        self.total_distance_offset: float = 0.0
 
     async def _async_setup(self) -> None:
         """Verbindet beim Setup."""
@@ -59,9 +73,12 @@ class WalkingPadCoordinator(DataUpdateCoordinator):
             return False
 
     def _on_status(self, sender, status: WalkingPadCurStatus) -> None:
-        """Callback für Status-Updates vom Gerät."""
-        # Wird im BLE-Thread aufgerufen, daher nur Daten speichern
+        """Callback für Status-Updates vom Gerät (läuft im BLE-Thread)."""
         self._last_status = status
+        _LOGGER.debug(
+            "Status empfangen: steps=%s dist=%s speed=%s belt_state=%s",
+            status.steps, status.dist, status.speed, status.belt_state
+        )
 
     async def _async_update_data(self) -> dict[str, Any]:
         """Holt aktuelle Daten vom WalkingPad."""
@@ -71,27 +88,82 @@ class WalkingPadCoordinator(DataUpdateCoordinator):
                 raise UpdateFailed("Keine Verbindung zum WalkingPad")
 
         try:
+            # Alten Status merken für Vergleich
+            old_status = self._last_status
+
             # Status explizit anfragen
             await self.controller.ask_stats()
-            await asyncio.sleep(0.3)
+            # Länger warten damit die Antwort kommt (mindestens 1 Sekunde)
+            await asyncio.sleep(1.0)
 
-            # Letzten Status holen
-            status = getattr(self.controller, "last_status", None) or getattr(self, "_last_status", None)
+            # Aktuellen Status holen (vom Controller oder Callback)
+            status = getattr(self.controller, "last_status", None) or self._last_status
 
             if status is None:
                 raise UpdateFailed("Keine Status-Daten empfangen")
 
-            # Daten extrahieren
+            # Prüfen ob sich was geändert hat
+            if old_status and status.rtime == old_status.rtime:
+                # Gleicher Status - trotzdem Daten zurückgeben
+                _LOGGER.debug("Status unverändert")
+
+            # Rohwerte vom Gerät
+            device_steps = status.steps
+            device_distance = status.dist / 100.0  # km
+            device_speed = status.speed / 10.0  # km/h
+            belt_state = status.belt_state
+
+            # Gesamt-Statistik berechnen:
+            # Wenn das Gerät neu gestartet wurde (steps kleiner als vorher),
+            # addieren wir den letzten Wert zum Offset
+            if self._last_device_steps is not None:
+                if device_steps < self._last_device_steps:
+                    # Gerät wurde zurückgesetzt - zur Gesamt-Statistik addieren
+                    self.total_steps_offset += self._last_device_steps
+                    _LOGGER.info("Schritt-Reset erkannt: +%s Schritte zur Gesamt-Statistik",
+                                self._last_device_steps)
+                if device_distance < self._last_device_distance:
+                    # Distanz wurde zurückgesetzt
+                    self.total_distance_offset += self._last_device_distance
+                    _LOGGER.info("Distanz-Reset erkannt: +%.2f km zur Gesamt-Statistik",
+                                self._last_device_distance)
+
+            self._last_device_steps = device_steps
+            self._last_device_distance = device_distance
+
+            # Gesamt-Werte berechnen
+            total_steps = self.total_steps_offset + device_steps
+            total_distance = round(self.total_distance_offset + device_distance, 2)
+
+            # Kalorien aus Gesamt-Distanz
+            total_calories = round(total_distance * 60)
+
+            # Daten zusammenstellen
             data = {
-                "speed": status.speed / 10.0,  # km/h
-                "steps": status.steps,
-                "distance": status.dist / 100.0,  # km
-                "time": status.time,  # Sekunden
-                "belt_state": status.belt_state,
+                # Aktuelle Session (vom Gerät)
+                "speed": device_speed,
+                "steps": device_steps,
+                "distance": device_distance,
+                "time": status.time,
+                "belt_state": belt_state,
                 "mode": status.manual_mode,
-                "is_running": status.belt_state == 1,
-                "calories": round(status.dist / 100.0 * 60),  # ~60 kcal/km
+                # Status: läuft wenn belt_state == 1 ODER speed > 0
+                "is_running": belt_state == BELT_STATE_RUNNING or device_speed > 0,
+                "calories": round(device_distance * 60),
+                # Gesamt-Werte (persistent über Neustarts)
+                "total_steps": total_steps,
+                "total_distance": total_distance,
+                "total_calories": total_calories,
+                # Für Debugging
+                "total_steps_offset": self.total_steps_offset,
+                "total_distance_offset": self.total_distance_offset,
             }
+
+            _LOGGER.debug(
+                "Daten: steps=%s (gesamt=%s) dist=%.2f (gesamt=%.2f) speed=%.1f running=%s",
+                device_steps, total_steps, device_distance, total_distance,
+                device_speed, data["is_running"]
+            )
 
             self._connected = True
             return data
@@ -106,6 +178,7 @@ class WalkingPadCoordinator(DataUpdateCoordinator):
         if not self.controller or not self._connected:
             raise RuntimeError("Nicht verbunden")
         await self.controller.start_belt()
+        await asyncio.sleep(0.5)
         await self.async_request_refresh()
 
     async def async_stop_belt(self) -> None:
@@ -113,6 +186,7 @@ class WalkingPadCoordinator(DataUpdateCoordinator):
         if not self.controller or not self._connected:
             raise RuntimeError("Nicht verbunden")
         await self.controller.stop_belt()
+        await asyncio.sleep(0.5)
         await self.async_request_refresh()
 
     async def async_set_speed(self, speed_kmh: float) -> None:
@@ -123,6 +197,7 @@ class WalkingPadCoordinator(DataUpdateCoordinator):
         speed_kmh = round(speed_kmh * 2) / 2
         speed_kmh = max(0.5, min(6.0, speed_kmh))
         await self.controller.change_speed(int(speed_kmh * 10))
+        await asyncio.sleep(0.3)
         await self.async_request_refresh()
 
     async def async_disconnect(self) -> None:

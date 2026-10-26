@@ -38,14 +38,25 @@ Custom Integration für **KingSmith WalkingPad** Laufbänder - Bluetooth Steueru
 ## 🎯 Erstellte Entitäten
 
 ### 📊 Sensoren
+
+#### Aktuelle Session (werden bei Neustart des Geräts zurückgesetzt)
 | Entität | Beschreibung |
 |---------|-------------|
 | `sensor.walkingpad_geschwindigkeit` | Aktuelle Geschwindigkeit (km/h) |
-| `sensor.walkingpad_schritte` | Schrittzahl |
-| `sensor.walkingpad_distanz` | Distanz (km) |
-| `sensor.walkingpad_aktive_zeit` | Aktive Zeit (Sekunden) |
-| `sensor.walkingpad_kalorien` | Geschätzte Kalorien (kcal) |
+| `sensor.walkingpad_schritte_session` | Schritte (aktuelle Session) |
+| `sensor.walkingpad_distanz_session` | Distanz in km (aktuelle Session) |
+| `sensor.walkingpad_zeit_session` | Aktive Zeit (Sekunden) |
+| `sensor.walkingpad_kalorien_session` | Kalorien (aktuelle Session) |
 | `sensor.walkingpad_status` | Status (Bereit/Läuft/Pause/Stop) |
+
+#### 🏆 Gesamt-Statistik (bleibt über Neustarts gespeichert!)
+| Entität | Beschreibung |
+|---------|-------------|
+| `sensor.walkingpad_schritte_gesamt` | **Schritte GESAMT** (nie zurückgesetzt) |
+| `sensor.walkingpad_distanz_gesamt` | **Distanz GESAMT** in km (nie zurückgesetzt) |
+| `sensor.walkingpad_kalorien_gesamt` | **Kalorien GESAMT** (berechnet aus Distanz) |
+
+> 💡 Die Gesamt-Sensoren speichern ihren Wert automatisch und setzen sich **nicht** zurück, wenn das WalkingPad oder Home Assistant neu gestartet wird!
 
 ### 🔘 Switch
 | Entität | Beschreibung |
