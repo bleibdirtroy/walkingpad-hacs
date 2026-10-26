@@ -1,8 +1,7 @@
 # WalkingPad 🏃
 
-[![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg?style=for-the-badge)](https://github.com/hacs/integration)
-[![GitHub Release](https://img.shields.io/github/release/troy/walkingpad-ha.svg?style=for-the-badge)](https://github.com/troy/walkingpad-ha/releases)
-[![License](https://img.shields.io/github/license/troy/walkingpad-ha.svg?style=for-the-badge)](LICENSE)
+[![HACS](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 Custom Integration für **KingSmith WalkingPad** Laufbänder - Bluetooth Steuerung direkt aus Home Assistant!
 
