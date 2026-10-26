@@ -58,17 +58,20 @@ Custom Integration für **KingSmith WalkingPad** Laufbänder - Bluetooth Steueru
 > 
 > ℹ️ **Hinweis:** Das WalkingPad liefert keine Kalorien-Daten. Alle Sensoren zeigen **echte Messwerte vom Gerät**.
 
-### 🔘 Switch
-| Entität | Beschreibung |
-|---------|-------------|
-| `switch.walkingpad` | Band starten/stoppen |
-
 ### 🔢 Number (Slider)
 | Entität | Beschreibung |
 |---------|-------------|
 | `number.walkingpad_geschwindigkeit` | Geschwindigkeit 0.5-6.0 km/h |
 
-### 🔵 Buttons (Speed Presets)
+### 🔵 Buttons
+
+#### Start/Stop
+| Entität | Beschreibung |
+|---------|-------------|
+| `button.walkingpad_start` | ▶️ Band starten |
+| `button.walkingpad_stop` | ⏹️ Band stoppen |
+
+#### Speed Presets
 | Entität | Geschwindigkeit |
 |---------|---------------|
 | `button.walkingpad_speed_1_0_km_h_langsam` | 1.0 km/h 🐢 |
@@ -77,6 +80,13 @@ Custom Integration für **KingSmith WalkingPad** Laufbänder - Bluetooth Steueru
 | `button.walkingpad_speed_4_0_km_h_joggen` | 4.0 km/h 🏃‍♂️ |
 | `button.walkingpad_speed_5_0_km_h_schnell` | 5.0 km/h ⚡ |
 | `button.walkingpad_speed_6_0_km_h_max` | 6.0 km/h 🚀 |
+
+#### Modi
+| Entität | Beschreibung |
+|---------|-------------|
+| `button.walkingpad_modus_auto` | 🤖 Auto-Modus (automatische Geschwindigkeitsregelung) |
+| `button.walkingpad_modus_manuell` | ✋ Manueller Modus (feste Geschwindigkeit) |
+| `button.walkingpad_modus_standby` | ⏸️ Standby-Modus |
 
 ## 🔧 Services
 

@@ -195,6 +195,14 @@ class WalkingPadCoordinator(DataUpdateCoordinator):
         await asyncio.sleep(0.3)
         await self.async_request_refresh()
 
+    async def async_switch_mode(self, mode: int) -> None:
+        """Wechselt den Modus (0=Auto, 1=Manuell, 2=Standby)."""
+        if not self.controller or not self._connected:
+            raise RuntimeError("Nicht verbunden")
+        await self.controller.switch_mode(mode)
+        await asyncio.sleep(0.5)
+        await self.async_request_refresh()
+
     async def async_disconnect(self) -> None:
         """Trennt die Verbindung sauber."""
         if self.controller and self._connected:
