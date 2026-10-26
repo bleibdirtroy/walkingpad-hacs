@@ -135,10 +135,7 @@ class WalkingPadCoordinator(DataUpdateCoordinator):
             total_steps = self.total_steps_offset + device_steps
             total_distance = round(self.total_distance_offset + device_distance, 2)
 
-            # Kalorien aus Gesamt-Distanz
-            total_calories = round(total_distance * 60)
-
-            # Daten zusammenstellen
+            # Daten zusammenstellen (nur echte Werte vom Gerät!)
             data = {
                 # Aktuelle Session (vom Gerät)
                 "speed": device_speed,
@@ -149,11 +146,9 @@ class WalkingPadCoordinator(DataUpdateCoordinator):
                 "mode": status.manual_mode,
                 # Status: läuft wenn belt_state == 1 ODER speed > 0
                 "is_running": belt_state == BELT_STATE_RUNNING or device_speed > 0,
-                "calories": round(device_distance * 60),
                 # Gesamt-Werte (persistent über Neustarts)
                 "total_steps": total_steps,
                 "total_distance": total_distance,
-                "total_calories": total_calories,
                 # Für Debugging
                 "total_steps_offset": self.total_steps_offset,
                 "total_distance_offset": self.total_distance_offset,

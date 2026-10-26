@@ -40,23 +40,23 @@ Custom Integration für **KingSmith WalkingPad** Laufbänder - Bluetooth Steueru
 ### 📊 Sensoren
 
 #### Aktuelle Session (werden bei Neustart des Geräts zurückgesetzt)
-| Entität | Beschreibung |
-|---------|-------------|
-| `sensor.walkingpad_geschwindigkeit` | Aktuelle Geschwindigkeit (km/h) |
-| `sensor.walkingpad_schritte_session` | Schritte (aktuelle Session) |
-| `sensor.walkingpad_distanz_session` | Distanz in km (aktuelle Session) |
-| `sensor.walkingpad_zeit_session` | Aktive Zeit (Sekunden) |
-| `sensor.walkingpad_kalorien_session` | Kalorien (aktuelle Session) |
-| `sensor.walkingpad_status` | Status (Bereit/Läuft/Pause/Stop) |
+| Entität | Beschreibung | Quelle |
+|---------|-------------|--------|
+| `sensor.walkingpad_geschwindigkeit` | Aktuelle Geschwindigkeit (km/h) | ✅ Gerät |
+| `sensor.walkingpad_schritte_session` | Schritte (aktuelle Session) | ✅ Gerät |
+| `sensor.walkingpad_distanz_session` | Distanz in km (aktuelle Session) | ✅ Gerät |
+| `sensor.walkingpad_zeit_session` | Aktive Zeit (Sekunden) | ✅ Gerät |
+| `sensor.walkingpad_status` | Status (Bereit/Läuft/Pause/Stop) | ✅ Gerät |
 
 #### 🏆 Gesamt-Statistik (bleibt über Neustarts gespeichert!)
-| Entität | Beschreibung |
-|---------|-------------|
-| `sensor.walkingpad_schritte_gesamt` | **Schritte GESAMT** (nie zurückgesetzt) |
-| `sensor.walkingpad_distanz_gesamt` | **Distanz GESAMT** in km (nie zurückgesetzt) |
-| `sensor.walkingpad_kalorien_gesamt` | **Kalorien GESAMT** (berechnet aus Distanz) |
+| Entität | Beschreibung | Quelle |
+|---------|-------------|--------|
+| `sensor.walkingpad_schritte_gesamt` | **Schritte GESAMT** (nie zurückgesetzt) | ✅ Gerät |
+| `sensor.walkingpad_distanz_gesamt` | **Distanz GESAMT** in km (nie zurückgesetzt) | ✅ Gerät |
 
 > 💡 Die Gesamt-Sensoren speichern ihren Wert automatisch und setzen sich **nicht** zurück, wenn das WalkingPad oder Home Assistant neu gestartet wird!
+> 
+> ℹ️ **Hinweis:** Das WalkingPad liefert keine Kalorien-Daten. Alle Sensoren zeigen **echte Messwerte vom Gerät**.
 
 ### 🔘 Switch
 | Entität | Beschreibung |

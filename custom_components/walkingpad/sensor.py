@@ -12,7 +12,6 @@ from homeassistant.const import (
     UnitOfLength,
     UnitOfTime,
     UnitOfSpeed,
-    UnitOfEnergy,
 )
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity import DeviceInfo
@@ -35,17 +34,15 @@ async def async_setup_entry(
     coordinator: WalkingPadCoordinator = hass.data[DOMAIN][entry.entry_id]
 
     entities = [
-        # Aktuelle Session
+        # Aktuelle Session (echte Werte vom Gerät)
         WalkingPadSpeedSensor(coordinator, entry),
         WalkingPadStepsSensor(coordinator, entry),
         WalkingPadDistanceSensor(coordinator, entry),
         WalkingPadTimeSensor(coordinator, entry),
-        WalkingPadCaloriesSensor(coordinator, entry),
         WalkingPadStatusSensor(coordinator, entry),
         # Gesamt-Statistik (persistent über Neustarts)
         WalkingPadTotalStepsSensor(coordinator, entry),
         WalkingPadTotalDistanceSensor(coordinator, entry),
-        WalkingPadTotalCaloriesSensor(coordinator, entry),
     ]
 
     async_add_entities(entities)
@@ -160,27 +157,6 @@ class WalkingPadTimeSensor(WalkingPadSensorBase):
         """Aktive Zeit in Sekunden."""
         if self.coordinator.data:
             return int(self.coordinator.data.get("time", 0))
-        return 0
-
-
-class WalkingPadCaloriesSensor(WalkingPadSensorBase):
-    """Kalorien in der aktuellen Session."""
-
-    _attr_name = "Kalorien (Session)"
-    _attr_device_class = SensorDeviceClass.ENERGY
-    _attr_state_class = SensorStateClass.TOTAL_INCREASING
-    _attr_native_unit_of_measurement = UnitOfEnergy.KILO_CALORIE
-    _attr_icon = "mdi:fire"
-
-    def __init__(self, coordinator, entry):
-        super().__init__(coordinator, entry)
-        self._attr_unique_id = f"{entry.entry_id}_calories"
-
-    @property
-    def native_value(self) -> int:
-        """Kalorien der Session."""
-        if self.coordinator.data:
-            return int(self.coordinator.data.get("calories", 0))
         return 0
 
 
@@ -326,26 +302,4 @@ class WalkingPadTotalDistanceSensor(WalkingPadTotalSensorBase):
         return round(self._total_value, 2)
 
 
-class WalkingPadTotalCaloriesSensor(WalkingPadTotalSensorBase):
-    """Kalorien GESAMT (persistent, berechnet aus Gesamt-Distanz)."""
 
-    _attr_name = "Kalorien (Gesamt)"
-    _attr_device_class = SensorDeviceClass.ENERGY
-    _attr_state_class = SensorStateClass.TOTAL
-    _attr_native_unit_of_measurement = UnitOfEnergy.KILO_CALORIE
-    _attr_icon = "mdi:fire"
-
-    # ~60 kcal pro km beim Gehen
-    KCAL_PER_KM = 60
-
-    def __init__(self, coordinator, entry):
-        super().__init__(coordinator, entry)
-        self._attr_unique_id = f"{entry.entry_id}_total_calories"
-
-    @property
-    def native_value(self) -> int:
-        """Gesamte Kalorien (berechnet aus Gesamt-Distanz)."""
-        if self.coordinator.data:
-            total_distance = self.coordinator.data.get("total_distance", 0)
-            return int(total_distance * self.KCAL_PER_KM)
-        return int(self._total_value * self.KCAL_PER_KM)
