@@ -1,0 +1,41 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "WalkingPad einrichten",
+        "description": "Verbinde dein KingSmith WalkingPad. {info}",
+        "data": {
+          "address": "MAC-Adresse",
+          "name": "Name"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "Dieses Gerät ist bereits konfiguriert."
+    },
+    "error": {
+      "cannot_connect": "Verbindung fehlgeschlagen",
+      "unknown": "Unbekannter Fehler"
+    }
+  },
+  "services": {
+    "start": {
+      "name": "Start",
+      "description": "Startet das WalkingPad Band."
+    },
+    "stop": {
+      "name": "Stop",
+      "description": "Stoppt das WalkingPad Band."
+    },
+    "set_speed": {
+      "name": "Geschwindigkeit setzen",
+      "description": "Setzt die Geschwindigkeit des WalkingPad.",
+      "fields": {
+        "speed": {
+          "name": "Geschwindigkeit",
+          "description": "Zielgeschwindigkeit in km/h (0.5 - 6.0)"
+        }
+      }
+    }
+  }
+}

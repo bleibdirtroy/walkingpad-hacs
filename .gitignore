@@ -85,10 +85,6 @@ $RECYCLE.BIN/
 .directory
 .Trash-*
 
-# Home Assistant (falls lokal getestet)
-hacs.json
-custom_components/
-
 # Logs
 *.log
 logs/
