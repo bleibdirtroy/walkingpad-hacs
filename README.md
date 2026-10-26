@@ -1,43 +1,42 @@
-# WalkingPad Home Assistant Integration 🏃
+# WalkingPad 🏃
 
-Custom Integration für KingSmith WalkingPad Laufbänder.
+[![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg?style=for-the-badge)](https://github.com/hacs/integration)
+[![GitHub Release](https://img.shields.io/github/release/troy/walkingpad-ha.svg?style=for-the-badge)](https://github.com/troy/walkingpad-ha/releases)
+[![License](https://img.shields.io/github/license/troy/walkingpad-ha.svg?style=for-the-badge)](LICENSE)
 
-## 📦 Installation
+Custom Integration für **KingSmith WalkingPad** Laufbänder - Bluetooth Steuerung direkt aus Home Assistant!
 
-### Schritt 1: Ordner auf HA kopieren
+## ✨ Features
 
-Kopiere den kompletten `walkingpad` Ordner nach:
+- 📊 **Live-Sensoren**: Schritte, Distanz, Geschwindigkeit, Zeit, Kalorien, Status
+- 🔘 **Switch**: Band starten/stoppen
+- 🔢 **Slider**: Geschwindigkeit 0.5-6.0 km/h (0.5er Schritte)
+- 🔵 **6 Speed-Presets**: Schnellzugriff auf voreingestellte Geschwindigkeiten
+- 🤖 **Services**: Für Automationen nutzbar
+- 🔍 **Auto-Discovery**: Findet dein WalkingPad automatisch
 
-```
-/config/custom_components/walkingpad/
-```
+## 📦 Installation via HACS (empfohlen)
 
-**Via SCP/Samba:**
-```bash
-# Von deinem PC auf den HA Server kopieren
-scp -r walkingpad/ root@homeassistant.local:/config/custom_components/
-```
+1. **HACS öffnen** (im Seitenmenü)
+2. Auf die **drei Punkte** oben rechts klicken → **Benutzerdefinierte Repositories**
+3. Diesen Link einfügen:
+   ```
+   https://github.com/troy/walkingpad-ha
+   ```
+4. Kategorie: **Integration**
+5. **Hinzufügen** klicken
+6. Nach **"WalkingPad"** suchen und **Downloaden**
+7. **Home Assistant neu starten**
+8. Einstellungen → Geräte & Dienste → **+ Integration hinzufügen** → **WalkingPad**
 
-**Via File Editor Add-on:**
-1. In HA: Add-ons → File Editor → Installieren & Starten
-2. Navigiere zu `/config/custom_components/`
-3. Erstelle Ordner `walkingpad`
-4. Kopiere alle Dateien hinein
+## 📦 Manuelle Installation
 
-### Schritt 2: Home Assistant neu starten
-
-Einstellungen → System → **Neu starten**
-
-### Schritt 3: Integration hinzufügen
-
-1. Einstellungen → Geräte & Dienste → **Integration hinzufügen**
-2. Suche nach **"WalkingPad"**
-3. Das Gerät wird automatisch erkannt (Name: "WalkingPad")
-4. Fertig! ✅
+1. Lade den Ordner `custom_components/walkingpad/` herunter
+2. Kopiere ihn nach `/config/custom_components/walkingpad/` auf deinem HA Server
+3. **Home Assistant neu starten**
+4. Einstellungen → Geräte & Dienste → **+ Integration hinzufügen** → **WalkingPad**
 
 ## 🎯 Erstellte Entitäten
-
-Nach der Einrichtung hast du:
 
 ### 📊 Sensoren
 | Entität | Beschreibung |
@@ -57,7 +56,7 @@ Nach der Einrichtung hast du:
 ### 🔢 Number (Slider)
 | Entität | Beschreibung |
 |---------|-------------|
-| `number.walkingpad_geschwindigkeit` | Geschwindigkeit 0.5-6.0 km/h in 0.5er Schritten |
+| `number.walkingpad_geschwindigkeit` | Geschwindigkeit 0.5-6.0 km/h |
 
 ### 🔵 Buttons (Speed Presets)
 | Entität | Geschwindigkeit |
@@ -69,7 +68,7 @@ Nach der Einrichtung hast du:
 | `button.walkingpad_speed_5_0_km_h_schnell` | 5.0 km/h ⚡ |
 | `button.walkingpad_speed_6_0_km_h_max` | 6.0 km/h 🚀 |
 
-## 🔧 Services (für Automationen)
+## 🔧 Services
 
 ```yaml
 # Band starten
@@ -109,8 +108,10 @@ entities:
 ---
 type: gauge
 entity: sensor.walkingpad_geschwindigkeit
+name: Geschwindigkeit
 min: 0
 max: 6
+unit: km/h
 severity:
   green: 0
   yellow: 3
@@ -151,55 +152,49 @@ action:
       entity_id: switch.walkingpad
 ```
 
-### Kalorien-Benachrichtigung
-```yaml
-alias: "100 Kalorien verbrannt!"
-trigger:
-  - platform: numeric_state
-    entity_id: sensor.walkingpad_kalorien
-    above: 100
-condition:
-  - condition: state
-    entity_id: switch.walkingpad
-    state: "on"
-action:
-  - service: notify.mobile_app
-    data:
-      message: "🔥 Du hast 100 kcal verbrannt! Weiter so!"
-```
-
 ## 🐛 Troubleshooting
 
 | Problem | Lösung |
 |---------|--------|
-| Integration nicht gefunden | HA neu starten, Ordner prüfen: `/config/custom_components/walkingpad/` |
+| Integration nicht in HACS | Repo-URL prüfen, HACS neu laden |
 | "Keine Verbindung" | WalkingPad einschalten, Bluetooth-Reichweite prüfen |
-| `ph4-walkingpad` nicht installiert | HA installiert automatisch aus `manifest.json` requirements |
-| Mehrere Geräte | MAC-Adresse wird automatisch gespeichert |
+| `ph4-walkingpad` fehlt | Wird automatisch aus `manifest.json` installiert |
+| Nach Update Probleme | HA neu starten, Cache leeren |
 
-## 📁 Dateistruktur
+## 📁 Projekt-Struktur
 
 ```
-walkingpad/
-├── manifest.json          # Metadaten & Abhängigkeiten
-├── __init__.py            # Haupt-Setup
-├── config_flow.py         # Einrichtungs-Assistent
-├── const.py               # Konstanten
-├── coordinator.py         # Bluetooth-Kommunikation
-├── sensor.py              # Sensoren
-├── switch.py              # An/Aus-Schalter
-├── number.py              # Geschwindigkeits-Slider
-├── button.py              # Speed-Presets
-├── services.yaml          # Service-Definitionen
-├── strings.json           # UI-Texte
-└── translations/
-    ├── de.json            # Deutsch
-    └── en.json            # Englisch
+├── custom_components/
+│   └── walkingpad/
+│       ├── manifest.json
+│       ├── __init__.py
+│       ├── config_flow.py
+│       ├── coordinator.py
+│       ├── sensor.py
+│       ├── switch.py
+│       ├── number.py
+│       ├── button.py
+│       ├── services.yaml
+│       ├── strings.json
+│       └── translations/
+├── hacs.json
+├── README.md
+└── .github/
+    └── workflows/
+        ├── hacs.yaml
+        └── validate.yaml
 ```
 
-## 🔗 Basierend auf
+## 🔗 Credits
 
-- [ph4-walkingpad](https://pypi.org/project/ph4-walkingpad/) - Bluetooth Protokoll
-- [bleak](https://github.com/hbldh/bleak) - Bluetooth Low Energy
+- [ph4-walkingpad](https://pypi.org/project/ph4-walkingpad/) - Bluetooth Protokoll Library
+- [bleak](https://github.com/hbldh/bleak) - Bluetooth Low Energy für Python
+- [HACS](https://hacs.xyz/) - Home Assistant Community Store
 
-Viel Spaß! 🚶‍♂️💨
+## 📄 Lizenz
+
+MIT License - siehe [LICENSE](LICENSE)
+
+---
+
+**Viel Spaß beim Walken!** 🚶‍♂️💨
