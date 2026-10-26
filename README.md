@@ -107,3 +107,9 @@ service: walkingpad.set_speed      # Set speed (data: {speed: 3.5})
 ## 📄 License
 
 MIT License - see [LICENSE](LICENSE)
+
+---
+
+## 🤖 AI Usage Disclosure
+
+This project was developed with assistance from AI tools (Claude by Anthropic). The code was reviewed, tested, and adapted for this specific use case. While AI helped with code generation and structure, all functionality has been verified and tested with a real WalkingPad C1 device.

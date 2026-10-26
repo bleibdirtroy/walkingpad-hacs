@@ -107,3 +107,9 @@ service: walkingpad.set_speed      # Geschwindigkeit setzen (data: {speed: 3.5})
 ## 📄 Lizenz
 
 MIT License - siehe [LICENSE](LICENSE)
+
+---
+
+## 🤖 KI-Nutzung (AI Usage Disclosure)
+
+Dieses Projekt wurde mit Unterstützung von KI-Tools (Claude von Anthropic) entwickelt. Der Code wurde überprüft, getestet und für diesen spezifischen Anwendungsfall angepasst. Obwohl KI bei der Code-Generierung und Struktur geholfen hat, wurde die gesamte Funktionalität mit einem echten WalkingPad C1 Gerät verifiziert und getestet.
