@@ -68,8 +68,6 @@ Custom integration for **KingSmith WalkingPad** treadmills - Bluetooth control d
 | `sensor.walkingpad_total_steps` | **Total steps** (never reset) |
 | `sensor.walkingpad_total_distance` | **Total distance** in km (never reset) |
 
-> ℹ️ **Note:** The WalkingPad does not provide calorie data. All sensors show **real measurements from the device**.
-
 ### 🔢 Number (Slider)
 | Entity | Description |
 |--------|-------------|

@@ -68,8 +68,6 @@ Custom Integration für **KingSmith WalkingPad** Laufbänder - Bluetooth Steueru
 | `sensor.walkingpad_schritte_gesamt` | **Schritte GESAMT** (nie zurückgesetzt) |
 | `sensor.walkingpad_distanz_gesamt` | **Distanz GESAMT** in km (nie zurückgesetzt) |
 
-> ℹ️ **Hinweis:** Das WalkingPad liefert keine Kalorien-Daten. Alle Sensoren zeigen **echte Messwerte vom Gerät**.
-
 ### 🔢 Number (Slider)
 | Entität | Beschreibung |
 |---------|-------------|
