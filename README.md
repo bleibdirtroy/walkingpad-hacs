@@ -16,7 +16,13 @@ Custom Integration für **KingSmith WalkingPad** Laufbänder - Bluetooth Steueru
 - 🏆 **Gesamt-Statistik**: Schritte & Distanz GESAMT (bleiben über Neustarts gespeichert)
 - 🔢 **Slider**: Geschwindigkeit 0.5-6.0 km/h (0.5er Schritte)
 - 🔵 **Buttons**: Start, Stop, 6 Speed-Presets, 3 Modi (Auto/Manuell/Standby)
-- 🔍 **Auto-Discovery**: Findet dein WalkingPad automatisch
+
+## 🔌 Verbindung
+
+- Verbindung erfolgt **ausschließlich über Bluetooth** (BLE) direkt zum Gerät
+- Beim Einrichten wird nach dem Gerätenamen **"WalkingPad"** gesucht und dessen **MAC-Adresse** gespeichert
+- Das WalkingPad muss sich in **Bluetooth-Reichweite** befinden
+- Es wird keine Cloud-Verbindung genutzt - alles lokal!
 
 ## 📦 Installation via HACS
 
@@ -87,11 +93,6 @@ service: walkingpad.start          # Band starten
 service: walkingpad.stop           # Band stoppen
 service: walkingpad.set_speed      # Geschwindigkeit setzen (data: {speed: 3.5})
 ```
-
-## 🐛 Troubleshooting
-
-- **"Keine Verbindung"** → WalkingPad einschalten, Bluetooth-Reichweite prüfen
-- **Funktioniert nicht** → Nur mit **WalkingPad C1** getestet, andere Modelle nicht getestet!
 
 ## 🔗 Credits
 
