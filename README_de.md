@@ -18,6 +18,7 @@ Custom Integration für **KingSmith WalkingPad** Laufbänder - Bluetooth Steueru
 ## ✨ Features
 
 - 📊 **Live-Sensoren**: Schritte, Distanz, Geschwindigkeit, Zeit, Status (alle echten Werte vom Gerät)
+- 📅 **Tägliche Statistik**: Schritte & Distanz HEUTE (Reset um Mitternacht)
 - 🏆 **Gesamt-Statistik**: Schritte & Distanz GESAMT (bleiben über Neustarts gespeichert)
 - 🔢 **Slider**: Geschwindigkeit 0.5-6.0 km/h (0.5er Schritte)
 - 🔵 **Buttons**: Start, Stop, 6 Speed-Presets, 3 Modi (Auto/Manuell/Standby)
@@ -61,6 +62,12 @@ Custom Integration für **KingSmith WalkingPad** Laufbänder - Bluetooth Steueru
 | `sensor.walkingpad_distanz_session` | Distanz in km (aktuelle Session) |
 | `sensor.walkingpad_zeit_session` | Aktive Zeit (Sekunden) |
 | `sensor.walkingpad_status` | Status (Bereit/Läuft/Pause/Stop) |
+
+#### 📅 Tägliche Statistik (Reset um Mitternacht)
+| Entität | Beschreibung |
+|---------|-------------|
+| `sensor.walkingpad_schritte_heute` | **Schritte HEUTE** (Reset um Mitternacht) |
+| `sensor.walkingpad_distanz_heute` | **Distanz HEUTE** in km (Reset um Mitternacht) |
 
 #### 🏆 Gesamt-Statistik (persistent über Neustarts)
 | Entität | Beschreibung |

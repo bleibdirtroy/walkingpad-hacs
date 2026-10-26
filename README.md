@@ -18,6 +18,7 @@ Custom integration for **KingSmith WalkingPad** treadmills - Bluetooth control d
 ## ✨ Features
 
 - 📊 **Live sensors**: Steps, distance, speed, time, status (all real values from the device)
+- 📅 **Daily statistics**: Steps & distance today (resets at midnight)
 - 🏆 **Total statistics**: Total steps & distance (persisted across restarts)
 - 🔢 **Slider**: Speed 0.5-6.0 km/h (0.5 steps)
 - 🔵 **Buttons**: Start, Stop, 6 speed presets, 3 modes (Auto/Manual/Standby)
@@ -61,6 +62,12 @@ Custom integration for **KingSmith WalkingPad** treadmills - Bluetooth control d
 | `sensor.walkingpad_distance_session` | Distance in km (current session) |
 | `sensor.walkingpad_time_session` | Active time (seconds) |
 | `sensor.walkingpad_status` | Status (Ready/Running/Paused/Stopped) |
+
+#### 📅 Daily Statistics (reset at midnight)
+| Entity | Description |
+|--------|-------------|
+| `sensor.walkingpad_daily_steps` | **Steps today** (resets at midnight) |
+| `sensor.walkingpad_daily_distance` | **Distance today** in km (resets at midnight) |
 
 #### 🏆 Total Statistics (persistent across restarts)
 | Entity | Description |

@@ -1,6 +1,7 @@
 """Sensoren für WalkingPad."""
 
 import logging
+from datetime import date
 
 from homeassistant.components.sensor import (
     SensorDeviceClass,
@@ -40,6 +41,9 @@ async def async_setup_entry(
         WalkingPadDistanceSensor(coordinator, entry),
         WalkingPadTimeSensor(coordinator, entry),
         WalkingPadStatusSensor(coordinator, entry),
+        # Tägliche Statistik (Reset um Mitternacht)
+        WalkingPadDailyStepsSensor(coordinator, entry),
+        WalkingPadDailyDistanceSensor(coordinator, entry),
         # Gesamt-Statistik (persistent über Neustarts)
         WalkingPadTotalStepsSensor(coordinator, entry),
         WalkingPadTotalDistanceSensor(coordinator, entry),
@@ -300,6 +304,99 @@ class WalkingPadTotalDistanceSensor(WalkingPadTotalSensorBase):
             session_distance = float(self.coordinator.data.get("distance", 0))
             return round(self._calculate_total(session_distance), 2)
         return round(self._total_value, 2)
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# Tägliche Sensoren (Reset um Mitternacht / täglich)
+# ═══════════════════════════════════════════════════════════════════════
+
+class WalkingPadDailySensorBase(CoordinatorEntity, RestoreEntity, SensorEntity):
+    """Basisklasse für tägliche Sensoren (Reset um Mitternacht)."""
+
+    def __init__(
+        self,
+        coordinator: WalkingPadCoordinator,
+        entry: ConfigEntry,
+    ) -> None:
+        """Initialisiert den täglichen Sensor."""
+        super().__init__(coordinator)
+        self._entry = entry
+        self._attr_device_info = _device_info(entry)
+        self._daily_date: str | None = None  # "YYYY-MM-DD"
+        self._daily_start_value: float = 0.0  # Gesamt-Wert am Tagesbeginn
+
+    async def async_added_to_hass(self) -> None:
+        """Wird aufgerufen wenn die Entity zu HA hinzugefügt wird."""
+        await super().async_added_to_hass()
+        # Gespeicherte Werte wiederherstellen (Datum + Startwert)
+        if (last_state := await self.async_get_last_state()) is not None:
+            # Wir speichern nur den täglichen Wert, das Datum rekonstruieren wir
+            try:
+                # Wenn letzter Wert gespeichert, nehmen wir an es war heute
+                self._daily_date = date.today().isoformat()
+            except (ValueError, TypeError):
+                self._daily_date = None
+
+    def _calculate_daily(self, total_value: float) -> float:
+        """
+        Berechnet den täglichen Wert.
+        Reset um Mitternacht: Wenn neuer Tag, Startwert = aktueller Gesamt-Wert.
+        """
+        today = date.today().isoformat()
+
+        # Erster Aufruf oder neuer Tag?
+        if self._daily_date != today:
+            # Neuer Tag - Startwert auf aktuellen Gesamt-Wert setzen
+            self._daily_start_value = total_value
+            self._daily_date = today
+            _LOGGER.info("%s: Neuer Tag erkannt, Startwert: %s", self.entity_id, total_value)
+
+        daily_value = total_value - self._daily_start_value
+        # Nie negativ werden lassen
+        return max(0, daily_value)
+
+
+class WalkingPadDailyStepsSensor(WalkingPadDailySensorBase):
+    """Schritte HEUTE (Reset um Mitternacht)."""
+
+    _attr_name = "Schritte (Heute)"
+    _attr_state_class = SensorStateClass.TOTAL
+    _attr_native_unit_of_measurement = "Schritte"
+    _attr_icon = "mdi:shoe-print"
+
+    def __init__(self, coordinator, entry):
+        super().__init__(coordinator, entry)
+        self._attr_unique_id = f"{entry.entry_id}_daily_steps"
+
+    @property
+    def native_value(self) -> int:
+        """Schritte heute."""
+        if self.coordinator.data:
+            total_steps = float(self.coordinator.data.get("total_steps", 0))
+            return int(self._calculate_daily(total_steps))
+        return 0
+
+
+class WalkingPadDailyDistanceSensor(WalkingPadDailySensorBase):
+    """Distanz HEUTE in km (Reset um Mitternacht)."""
+
+    _attr_name = "Distanz (Heute)"
+    _attr_device_class = SensorDeviceClass.DISTANCE
+    _attr_state_class = SensorStateClass.TOTAL
+    _attr_native_unit_of_measurement = UnitOfLength.KILOMETERS
+    _attr_icon = "mdi:map-marker-distance"
+
+    def __init__(self, coordinator, entry):
+        super().__init__(coordinator, entry)
+        self._attr_unique_id = f"{entry.entry_id}_daily_distance"
+
+    @property
+    def native_value(self) -> float:
+        """Distanz heute in km."""
+        if self.coordinator.data:
+            total_distance = float(self.coordinator.data.get("total_distance", 0))
+            return round(self._calculate_daily(total_distance), 2)
+        return 0.0
 
 
 
