@@ -5,7 +5,10 @@
 
 Custom Integration für **KingSmith WalkingPad** Laufbänder - Bluetooth Steuerung direkt aus Home Assistant!
 
-> ⚠️ **Hinweis:** Diese Integration wurde mit einem **KingSmith WalkingPad C1** getestet. Sie funktioniert wahrscheinlich nur mit diesem Modell (ggf. auch A1, R1 PRO - nicht getestet).
+> ⚠️ **Nur mit KingSmith WalkingPad C1 getestet!**
+> Funktioniert bisher nur mit diesem Modell (ggf. auch A1, R1 PRO - nicht getestet).
+
+---
 
 ## ✨ Features
 
@@ -87,11 +90,8 @@ service: walkingpad.set_speed      # Geschwindigkeit setzen (data: {speed: 3.5})
 
 ## 🐛 Troubleshooting
 
-| Problem | Lösung |
-|---------|--------|
-| Integration nicht in HACS | Repo-URL prüfen: `bleibdirtroy/walkingpad-hacs` |
-| "Keine Verbindung" | WalkingPad einschalten, Bluetooth-Reichweite prüfen |
-| Funktioniert nicht | Nur mit **WalkingPad C1** getestet! Andere Modelle nicht getestet. |
+- **"Keine Verbindung"** → WalkingPad einschalten, Bluetooth-Reichweite prüfen
+- **Funktioniert nicht** → Nur mit **WalkingPad C1** getestet, andere Modelle nicht getestet!
 
 ## 🔗 Credits
 
