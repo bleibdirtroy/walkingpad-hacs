@@ -5,6 +5,9 @@
 
 Custom Integration für **KingSmith WalkingPad** Laufbänder - Bluetooth Steuerung direkt aus Home Assistant!
 
+> 🔒 **100% lokal - ohne Cloud!**
+> Alle Daten bleiben bei dir. Keine Internetverbindung zum Hersteller nötig.
+
 > ⚠️ **Nur mit KingSmith WalkingPad C1 getestet!**
 > Funktioniert bisher nur mit diesem Modell (ggf. auch A1, R1 PRO - nicht getestet).
 
@@ -19,10 +22,10 @@ Custom Integration für **KingSmith WalkingPad** Laufbänder - Bluetooth Steueru
 
 ## 🔌 Verbindung
 
-- Verbindung erfolgt **ausschließlich über Bluetooth** (BLE) direkt zum Gerät
+- **Ausschließlich Bluetooth (BLE)** - direkt vom Home Assistant zum Gerät
 - Beim Einrichten wird nach dem Gerätenamen **"WalkingPad"** gesucht und dessen **MAC-Adresse** gespeichert
 - Das WalkingPad muss sich in **Bluetooth-Reichweite** befinden
-- Es wird keine Cloud-Verbindung genutzt - alles lokal!
+- **Keine Cloud, kein Internet, keine Hersteller-Server** - alles läuft lokal in deinem Netzwerk!
 
 ## 📦 Installation via HACS
 
